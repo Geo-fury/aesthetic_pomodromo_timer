@@ -1,5 +1,7 @@
 import tkinter as tk
 import time
+import pandas as pd
+import random
 
 class PomodoroTimer:
     def __init__(self, root):
@@ -11,11 +13,17 @@ class PomodoroTimer:
         self.is_running = False
         self.is_break = False
 
+        # Load quotes from CSV
+        self.quotes = pd.read_csv('insparation.csv')['quote'].tolist()
+
         self.label = tk.Label(root, text="Pomodoro Timer", font=("Helvetica", 24))
         self.label.pack(pady=20)
 
         self.time_label = tk.Label(root, text=self.format_time(self.work_time), font=("Helvetica", 48))
         self.time_label.pack(pady=20)
+
+        self.quote_label = tk.Label(root, text="", font=("Helvetica", 14), wraplength=400, justify="center")
+        self.quote_label.pack(pady=20)
 
         self.start_button = tk.Button(root, text="Start", command=self.start_timer, font=("Helvetica", 14))
         self.start_button.pack(side=tk.LEFT, padx=20)
@@ -55,6 +63,7 @@ class PomodoroTimer:
             self.is_running = True
             self.label.config(text="Work Time!" if not self.is_break else "Break Time!")
             self.update_timer()
+            self.display_random_quote()
 
     def reset_timer(self):
         self.is_running = False
@@ -63,6 +72,11 @@ class PomodoroTimer:
         self.break_time = 5 * 60
         self.label.config(text="Pomodoro Timer")
         self.time_label.config(text=self.format_time(self.work_time))
+        self.quote_label.config(text="")
+
+    def display_random_quote(self):
+        quote = random.choice(self.quotes)
+        self.quote_label.config(text=quote)
 
 if __name__ == "__main__":
     root = tk.Tk()
